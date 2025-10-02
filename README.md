@@ -14,7 +14,7 @@ pip install -r requirements.txt
 The logistic regression training program requires three arguments:
 1. Path to the dataset CSV file
 2. Name of the column containing the class labels
-3. Output file path for the trained model (JSON format)
+3. Output file path for the trained model JSON format
 
 ### Example Usage:
 
