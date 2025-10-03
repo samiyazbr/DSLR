@@ -24,17 +24,23 @@ def custom_std(values):
 
 def custom_min(values):
     """Find the minimum value, ignoring NaN."""
-    values = [x for x in values if not np.isnan(x)]
-    if not values:
-        return np.nan
-    return min(values)
+    min_val = None
+    for x in values:
+        if np.isnan(x):
+            continue
+        if min_val is None or x < min_val:
+            min_val = x
+    return np.nan if min_val is None else min_val
 
 def custom_max(values):
     """Find the maximum value, ignoring NaN."""
-    values = [x for x in values if not np.isnan(x)]
-    if not values:
-        return np.nan
-    return max(values)
+    max_val = None
+    for x in values:
+        if np.isnan(x):
+            continue
+        if max_val is None or x > max_val:
+            max_val = x
+    return np.nan if max_val is None else max_val
 
 def custom_percentile(values, percentile):
     """Calculate the specified percentile, ignoring NaN."""

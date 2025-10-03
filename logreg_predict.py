@@ -1,8 +1,7 @@
 import numpy as np
 import sys
 import json
-from utils import load_data, normalize_features, sigmoid
-from sklearn.metrics import accuracy_score
+from utils import load_data, normalize_features, sigmoid, custom_mean
 
 def load_model(model_file):
     """Load model parameters from file"""
@@ -73,8 +72,12 @@ def main():
         
         # Handle missing values
         for col in range(X_test.shape[1]):
-            col_mean = np.nanmean(X_test[:, col])
-            X_test[:, col] = np.where(np.isnan(X_test[:, col]), col_mean, X_test[:, col])
+            col_values = X_test[:, col].tolist()
+            col_mean = custom_mean(col_values)
+            # Replace NaNs manually
+            for i in range(X_test.shape[0]):
+                if np.isnan(X_test[i, col]):
+                    X_test[i, col] = col_mean
         
         # Normalize features
         X_test_normalized = normalize_features(X_test)
@@ -96,7 +99,13 @@ def main():
             if true_class_column in header:
                 true_idx = header.index(true_class_column)
                 y_true = [data_array[i, true_idx] for i in range(len(data_array))]
-                accuracy = accuracy_score(y_true, y_pred)
+                # Manual accuracy: proportion of exact matches
+                correct = 0
+                total = len(y_pred)
+                for i in range(total):
+                    if str(y_true[i]) == str(y_pred[i]):
+                        correct += 1
+                accuracy = correct / total if total > 0 else 0.0
                 print(f"Accuracy: {accuracy:.4f}")
             else:
                 print(f"Warning: True class column '{true_class_column}' not found in data")

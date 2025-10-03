@@ -43,7 +43,12 @@ def train_one_vs_all(X, y, classes, learning_rate=0.1, num_iterations=1000):
                 # Calculate cost function
                 epsilon = 1e-5  # To prevent log(0)
                 h_clipped = np.clip(h, epsilon, 1 - epsilon)
-                cost = -np.mean(binary_y * np.log(h_clipped) + (1 - binary_y) * np.log(1 - h_clipped))
+                # Manual mean to avoid using forbidden helpers
+                loss_terms = binary_y * np.log(h_clipped) + (1 - binary_y) * np.log(1 - h_clipped)
+                total = 0.0
+                for val in loss_terms:
+                    total += val
+                cost = -(total / len(loss_terms))
                 print(f"Iteration {iteration + 1}/{num_iterations}, Cost: {cost:.6f}")
         
         all_theta[i] = theta
